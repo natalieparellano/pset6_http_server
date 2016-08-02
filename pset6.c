@@ -744,23 +744,22 @@ bool parse(const char* line, char* abs_path, char* query)
         return false;
     }
     
-    size_t abs_path_len;
+    size_t abs_path_len; // the number of characters we will copy into abs_path
     char* question_mark = strchr( line + 4, '?' );
 
     if ( question_mark != NULL )
     {
         abs_path_len = question_mark - (line + 4);
-        size_t query_len = next_space - question_mark - 1; // omit the '?'
-        
-        strncpy( abs_path, line + 4, abs_path_len );
-        strncpy( query, question_mark + 1, query_len );
+
+        size_t query_len = next_space - question_mark - 1; // omit the '?'                
+        strncpy( query, question_mark + 1, query_len ); // npa: what about null terminating the query?
     } else {
         abs_path_len = next_space - (line + 4);
-        strncpy( abs_path, line + 4, abs_path_len );
-        
+                
         query[0] = '\0'; // check on this...
     }
-    abs_path[abs_path_len] = '\0';
+    strncpy( abs_path, line + 4, abs_path_len );
+    abs_path[abs_path_len] = '\0'; // this is definitely required
     return true;    
 }
 
