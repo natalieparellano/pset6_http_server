@@ -637,28 +637,31 @@ void list(const char* path)
  */
 bool load(FILE* file, BYTE** content, size_t* length)
 {
+    // content is a memory location that should store the memory location of the loaded file
+    // content is a "pointer to a pointer" so it has two stars (**)
     BYTE buffer[BYTES]; // create a buffer to hold BYTES number of BYTEs
     
-    int bytes_read = 0;
-    int bytes_in_file = 0;
+    size_t bytes_just_read = 0; // fread returns a size_t
+    size_t total_bytes_in_file = 0;
+
+    BYTE* loaded_file_location = NULL;
     
-    while (( bytes_read = fread( &buffer, 1, sizeof( buffer ), file )) > 0 ) // read into the buffer until we reach end of file
-    {
-        bytes_in_file += bytes_read;
-        *content = realloc( *content, bytes_in_file ); // npa: understand this further 
+    // npa: where do we say that the size of one "object" is a byte?
+    while (( bytes_just_read = fread( &buffer, 1, sizeof( buffer ), file )) > 0 ) // read into the buffer until we reach end of file
+    {        
+        total_bytes_in_file += bytes_just_read;
+        loaded_file_location = realloc( loaded_file_location, total_bytes_in_file ); // npa: understand this further 
+
+        // find the first empty memory location after the already loaded file 
+        BYTE* first_empty = loaded_file_location + total_bytes_in_file - bytes_just_read;        
         
-        char* new_location = *content + bytes_in_file - bytes_read;
-        
-        memcpy( new_location, buffer, bytes_read );
+        memcpy( first_empty, buffer, bytes_just_read );
     }
-    
-    if ( bytes_read < 0 )
-    {
-        return false;
-    } else {
-        *length = bytes_in_file;    
-        return true;
-    }
+
+    // TODO: handle read errors
+    *content = loaded_file_location;
+    *length = total_bytes_in_file;    
+    return true;
 }
 
 /**
