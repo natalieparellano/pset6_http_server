@@ -460,7 +460,7 @@ char* indexes(const char* path)
             char* file_name = dir_item -> d_name;
             if (( strcmp( file_name, "index.html" ) == 0 ) || ( strcmp( file_name, "index.php" ) == 0 ))
             {
-                full_path = malloc( strlen( file_name ) + strlen( path ) + 1 ); // npa: ask about freeing this
+                full_path = malloc( strlen( file_name ) + strlen( path ) + 1 ); // npa: this gets freed elsewhere
                 full_path[0] = '\0';
                 strcat( full_path, path );
                 strcat( full_path, file_name );
@@ -659,7 +659,7 @@ bool load(FILE* file, BYTE** content, size_t* length)
     }
 
     // TODO: handle read errors
-    *content = loaded_file_location;
+    *content = loaded_file_location; // npa: this gets freed elsewhere
     *length = total_bytes_in_file;    
     return true;
 }
