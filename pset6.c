@@ -666,70 +666,48 @@ bool load(FILE* file, BYTE** content, size_t* length)
  */
 const char* lookup(const char* path)
 {
-    size_t extension_pos = 0;
-    if ((extension_pos = (strrchr(path, '.') - path + 1)))
+    char* mime_type = NULL;
+    char* address_of_period = strrchr( path, '.' );
+
+    if ( address_of_period )
     {
-        char* extension = malloc(strlen(path) - extension_pos + 1);
-        int i = 0;
-        for (i = 0; path[extension_pos+i] != '\0'; i++)
-        {
-            extension[i] = path[extension_pos+i];
-        }
-        extension[i] = '\0';
+        char* extension = address_of_period + 1; // omit the '.'
         printf( "Extension is %s\n", extension );
-        
-        // char* mime_type; // npa: ask about this...
 
         if (strcasecmp("css", extension) == 0)
-        {
-            free( extension );
-            return "text/css";
+        {            
+            mime_type = "text/css";
         }
         if (strcasecmp("html", extension) == 0)
-        {
-            free( extension );
-            return "text/html";
+        {            
+            mime_type = "text/html";
         }
         if (strcasecmp("gif", extension) == 0)
-        {
-            free( extension );
-            return "image/gif";
+        {            
+            mime_type = "image/gif";
         }
         if (strcasecmp("ico", extension) == 0)
-        {
-            free( extension );
-            return "image/x-icon";
+        {            
+            mime_type = "image/x-icon";
         }
         if (strcasecmp("jpg", extension) == 0)
-        {
-            free( extension );
-            return "image/jpeg";
+        {            
+            mime_type = "image/jpeg";
         }
         if (strcasecmp("js", extension) == 0)
-        {
-            free( extension );
-            return "text/javascript";
+        {            
+            mime_type = "text/javascript";
         }
         if (strcasecmp("php", extension) == 0)
-        {
-            free( extension );
-            return "text/x-php";
+        {            
+            mime_type = "text/x-php";
         }
         if (strcasecmp("png", extension) == 0)
-        {
-            free( extension );
-            return "image/png";
-        }
-        else
-        {
-            free( extension );
-            return NULL;
+        {            
+            mime_type = "image/png";
         }
     }
-    else
-    {
-        return NULL;
-    }
+    return mime_type;
 }
 
 /**
